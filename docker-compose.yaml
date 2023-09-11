@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  db:
+    container_name: ${CONTAINER_DB_NAME}
+    image: mongo:6.0
+    volumes:
+      - ./data:/data/db
+    ports:
+      - 27018:27017
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+    command: ['--auth']
