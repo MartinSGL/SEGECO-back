@@ -13,9 +13,14 @@ export const EnvConfiguration = () => ({
   super_user: process.env.SUPER_USER,
   super_email: process.env.SUPER_EMAIL,
   super_password: process.env.SUPER_PASSWORD,
+  super_fullname: process.env.SUPER_FULLNAME,
   admin_user: process.env.ADMIN_USER,
   admin_email: process.env.ADMIN_EMAIL,
-  admin_password: process.env.SUPER_PASSWORD,
+  admin_password: process.env.ADMIN_PASSWORD,
+  admin_fullname: process.env.ADMIN_FULLNAME,
+  salt: process.env.SALT,
+  // jtw
+  jwt_secret: process.env.JWT_SECRET,
   // seed password
   seed_password: process.env.SEED_PASSWORD,
 });

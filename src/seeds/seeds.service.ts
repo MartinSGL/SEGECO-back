@@ -5,6 +5,7 @@ import mongoose, { Model } from 'mongoose';
 import { roles } from 'src/users/interfaces/rolesInterface';
 import { User } from 'src/users/entities/user.entity';
 import { CommonService } from 'src/common/common.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class SeedsService {
@@ -33,25 +34,33 @@ export class SeedsService {
 
   async setUsersInfo() {
     //get the info from env file
-    const super_user = this.configService.get<string>('SUPER_USER');
-    const super_email = this.configService.get<string>('SUPER_EMAIL');
+    const super_user = this.configService.get<string>('SUPER_USER').toLowerCase();
     const super_password = this.configService.get<string>('SUPER_PASSWORD');
+    const super_fullname = this.configService.get<string>('SUPER_FULLNAME').toLowerCase();
     const super_role = roles.super;
 
-    const admin_user = this.configService.get<string>('ADMIN_USER');
-    const admin_email = this.configService.get<string>('ADMIN_EMAIL');
+    const admin_user = this.configService.get<string>('ADMIN_USER').toLowerCase();
     const admin_password = this.configService.get<string>('ADMIN_PASSWORD');
+    const admin_fullname = this.configService.get<string>('ADMIN_FULLNAME').toLowerCase();
     const admin_role = roles.super;
 
+    // salt
+    const salt = this.configService.get<number>('SALT');
+
+    const super_hash_password = await bcrypt.hash(super_password, salt);
+    const admin_hash_password = await bcrypt.hash(admin_password, salt);
+
     //check if that data exists
-    if (!super_user || !super_email || !super_password) {
+    if (!super_user || !super_password || !super_fullname) {
       return 'user, email and password must exist';
     }
 
     //check if that data exists
-    if (!admin_user || !admin_email || !admin_password) {
+    if (!admin_user || !admin_password || !admin_fullname) {
       return 'user, email and password must exist';
     }
+
+
 
     // check if data is already in DB
     try {
@@ -60,17 +69,17 @@ export class SeedsService {
         return 'Data already exist, therefore seed can not be executed';
       }
       //insert data if info is not in db
-      await this.userService.insertMany([
+      await this.userService.insertMany<User>([
         {
           user: super_user,
-          email: super_email,
-          password: super_password,
+          password: super_hash_password,
+          fullname: super_fullname,
           role: super_role,
         },
         {
           user: admin_user,
-          email: admin_email,
-          password: admin_password,
+          password: admin_hash_password,
+          fullname: admin_fullname,
           role: admin_role,
         },
       ]);

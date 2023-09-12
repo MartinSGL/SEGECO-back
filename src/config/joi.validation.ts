@@ -11,7 +11,14 @@ export const JoiValidationSchema = Joi.object({
   SUPER_USER: Joi.string().min(1).required(),
   SUPER_EMAIL: Joi.string().email(),
   SUPER_PASSWORD: Joi.string().required(),
+  SUPER_FULLNAME: Joi.string().required(),
   ADMIN_USER: Joi.string().min(1).required(),
   ADMIN_EMAIL: Joi.string().email(),
   ADMIN_PASSWORD: Joi.string().required(),
+  ADMIN_FULLNAME: Joi.string().required(),
+  SALT: Joi.number().required(),
+  // JWT
+  JWT_SECRET: Joi.string().required(),
+  // SEED PADDWORD
+  SEED_PASSWORD: Joi.string().required(),
 });
