@@ -6,6 +6,7 @@ import { roles } from 'src/users/interfaces/rolesInterface';
 import { User } from 'src/users/entities/user.entity';
 import { CommonService } from 'src/common/common.service';
 import * as bcrypt from 'bcrypt';
+import { CompaniesService } from 'src/companies/companies.service';
 
 @Injectable()
 export class SeedsService {
@@ -15,6 +16,7 @@ export class SeedsService {
     private readonly configService: ConfigService,
     @InjectConnection()
     private readonly connection: mongoose.Connection,
+    private readonly companiesService: CompaniesService,
     private readonly commonService: CommonService,
   ) {}
   async executeSeeders(password: string) {
@@ -25,24 +27,34 @@ export class SeedsService {
     if (password !== seed_password) {
       throw new BadRequestException('incorrect password');
     }
-    const userInfo = await this.setUsersInfo();
+    const usersInfo = await this.setUsersInfo();
+    const companiesInfo = await this.setCompaniesInfo();
 
     return {
-      userInfo,
+      usersInfo,
+      companiesInfo,
     };
   }
 
   async setUsersInfo() {
     //get the info from env file
-    const super_user = this.configService.get<string>('SUPER_USER').toLowerCase();
+    const super_user = this.configService
+      .get<string>('SUPER_USER')
+      .toLowerCase();
     const super_password = this.configService.get<string>('SUPER_PASSWORD');
-    const super_fullname = this.configService.get<string>('SUPER_FULLNAME').toLowerCase();
+    const super_fullname = this.configService
+      .get<string>('SUPER_FULLNAME')
+      .toLowerCase();
     const super_role = roles.super;
 
-    const admin_user = this.configService.get<string>('ADMIN_USER').toLowerCase();
+    const admin_user = this.configService
+      .get<string>('ADMIN_USER')
+      .toLowerCase();
     const admin_password = this.configService.get<string>('ADMIN_PASSWORD');
-    const admin_fullname = this.configService.get<string>('ADMIN_FULLNAME').toLowerCase();
-    const admin_role = roles.super;
+    const admin_fullname = this.configService
+      .get<string>('ADMIN_FULLNAME')
+      .toLowerCase();
+    const admin_role = roles.admin;
 
     // salt
     const salt = this.configService.get<number>('SALT');
@@ -59,8 +71,6 @@ export class SeedsService {
     if (!admin_user || !admin_password || !admin_fullname) {
       return 'user, email and password must exist';
     }
-
-
 
     // check if data is already in DB
     try {
@@ -86,6 +96,26 @@ export class SeedsService {
       // return message en data
       return 'seed executed successfully';
     } catch (error: any) {
+      this.commonService.handleError(error);
+    }
+  }
+
+  async setCompaniesInfo() {
+    try {
+      const companies = [{ name: 'peña' }];
+
+      const companiesFound = await this.companiesService.findAll();
+
+      if (companiesFound.length > 0)
+        return 'Data already exist, therefore seed can not be executed';
+
+      companies.map((company) => {
+        this.companiesService.create(company);
+      });
+
+      return 'seed executed successfully';
+    } catch (error) {
+      console.log(error);
       this.commonService.handleError(error);
     }
   }

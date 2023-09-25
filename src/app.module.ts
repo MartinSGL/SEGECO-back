@@ -6,6 +6,7 @@ import { JoiValidationSchema } from './config/joi.validation';
 import { CommonModule } from './common/common.module';
 import { SeedsModule } from './seeds/seeds.module';
 import { EnvConfiguration } from './config/app.config';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { EnvConfiguration } from './config/app.config';
     UsersModule,
     CommonModule,
     SeedsModule,
+    CompaniesModule,
   ],
   controllers: [],
   providers: [],

@@ -26,14 +26,11 @@ export class UsersService {
       user: loginUserDto.user,
     });
 
-    
-
     // check if user is correct
     if (!user) throw new UnauthorizedException('Invalid credentials');
     // check if password is correct
     const match = await bcrypt.compare(loginUserDto.password, user.password);
-    if (!match)
-      throw new UnauthorizedException('Invalid credentials');
+    if (!match) throw new UnauthorizedException('Invalid credentials');
 
     return {
       token: this.getJwtToken({
