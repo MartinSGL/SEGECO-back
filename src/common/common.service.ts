@@ -8,6 +8,7 @@ import {
 export class CommonService {
   //function to catch errors and return answers in all try-catch services functions
   handleError(error: any) {
+    console.log(error);
     // error for violation to unique rule in entity
     if (error.code === 11000) {
       throw new BadRequestException(

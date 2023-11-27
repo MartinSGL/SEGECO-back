@@ -7,6 +7,8 @@ import { User } from 'src/users/entities/user.entity';
 import { CommonService } from 'src/common/common.service';
 import * as bcrypt from 'bcrypt';
 import { CompaniesService } from 'src/companies/companies.service';
+import { fleet_information } from './data';
+import { FleetsService } from 'src/fleets/fleets.service';
 
 @Injectable()
 export class SeedsService {
@@ -17,6 +19,7 @@ export class SeedsService {
     @InjectConnection()
     private readonly connection: mongoose.Connection,
     private readonly companiesService: CompaniesService,
+    private readonly fleetService: FleetsService,
     private readonly commonService: CommonService,
   ) {}
   async executeSeeders(password: string) {
@@ -29,10 +32,12 @@ export class SeedsService {
     }
     const usersInfo = await this.setUsersInfo();
     const companiesInfo = await this.setCompaniesInfo();
+    const fleetsInfo = await this.setFleetInfo();
 
     return {
       usersInfo,
       companiesInfo,
+      fleetsInfo,
     };
   }
 
@@ -115,7 +120,21 @@ export class SeedsService {
 
       return 'seed executed successfully';
     } catch (error) {
-      console.log(error);
+      this.commonService.handleError(error);
+    }
+  }
+
+  async setFleetInfo() {
+    try {
+      const fleetsFound = await this.fleetService.findAll();
+      if (fleetsFound.length > 0)
+        return 'Data already exist, therefore seed can not be executed';
+      const promises = fleet_information.map((fleet) => {
+        this.fleetService.create(fleet);
+      });
+      await Promise.all(promises);
+      return 'seed executed successfully';
+    } catch (error) {
       this.commonService.handleError(error);
     }
   }

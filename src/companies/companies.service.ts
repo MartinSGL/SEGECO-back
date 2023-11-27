@@ -19,7 +19,6 @@ export class CompaniesService {
         await this.companyService.create<Company>(createCompanyDto);
       return company;
     } catch (error) {
-      console.log(error);
       return this.commonService.handleError(error);
     }
   }
@@ -39,7 +38,6 @@ export class CompaniesService {
       company.save();
       return company;
     } catch (error) {
-      console.log(error);
       return this.commonService.handleError(error);
     }
   }

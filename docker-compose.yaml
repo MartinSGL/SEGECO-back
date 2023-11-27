@@ -1,13 +1,77 @@
 version: '3'
 
 services:
+  backend:
+      build:
+        context: .
+        # context in this case is the root
+        target: ${STAGE}
+        # which stage of the docker file you want to build
+        dockerfile: Dockerfile
+        # by default DockerFile, but you can specify another
+      image: segeco-backend:0.0.1
+      # name of the image you want to build
+      # command: yarn start:dev // if you want to start de application
+      volumes:
+      - .:/app/
+      - /app/node_modules
+      container_name: segeco-back
+      depends_on:
+      - db
+      restart: always
+      ports:
+        - ${PORT}:${PORT}
+      environment:
+        PORT: ${PORT}
+        # MONGO VARIABLES
+        DB_URL: ${DB_URL}
+        CONTAINER_DB_NAME: ${CONTAINER_DB_NAME}
+        DB_USERNAME: ${DB_USERNAME}
+        DB_PASSWORD: ${DB_PASSWORD}
+        DB_NAME: ${DB_NAME}
+        # USERS
+        SUPER_USER: ${SUPER_USER}
+        SUPER_EMAIL: ${SUPER_EMAIL}
+        SUPER_PASSWORD: ${SUPER_PASSWORD}
+        SUPER_FULLNAME: ${SUPER_FULLNAME}
+        ADMIN_USER: ${ADMIN_USER}
+        ADMIN_EMAIL: ${ADMIN_EMAIL}
+        ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+        ADMIN_FULLNAME: ${ADMIN_FULLNAME}
+        #Bcrypt
+        SALT: ${SALT}
+        # JWT
+        JWT_SECRET: ${JWT_SECRET}
+        # SEED PASSWORD
+        SEED_PASSWORD: ${SEED_PASSWORD}
+
+  images:
+    env_file:
+      - ../segeco-images/.env
+    build:
+      context: .
+      # context in this case is the root
+      target: ${STAGE}
+      # which stage of the docker file you want to build
+      dockerfile: ../segeco-images/Dockerfile
+      # by default DockerFile, but you can specify another
+    image: segeco-images:0.0.1
+      # name of the image you want to build
+      # command: yarn start:dev // if you want to start de application
+    volumes:
+      - ../segeco-images:/app/
+    container_name: segeco-images
+    restart: always
+    ports:
+      - 3001:3001
+
   db:
     container_name: ${CONTAINER_DB_NAME}
     image: mongo:6.0
-    volumes:
-      - ./data:/data/db
     ports:
       - 27018:27017
+    volumes:
+      - ./data:/data/db
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}

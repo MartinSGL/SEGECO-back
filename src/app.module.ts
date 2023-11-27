@@ -7,6 +7,8 @@ import { CommonModule } from './common/common.module';
 import { SeedsModule } from './seeds/seeds.module';
 import { EnvConfiguration } from './config/app.config';
 import { CompaniesModule } from './companies/companies.module';
+import { FleetsModule } from './fleets/fleets.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { CompaniesModule } from './companies/companies.module';
     CommonModule,
     SeedsModule,
     CompaniesModule,
+    FleetsModule,
+    FilesModule,
   ],
   controllers: [],
   providers: [],
