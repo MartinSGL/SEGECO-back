@@ -1,7 +1,7 @@
 # env 
 .env
 # data base information
-data
+/data
 
 # compiled output
 /dist
