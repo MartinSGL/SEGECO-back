@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Res,
+  Delete,
+} from '@nestjs/common';
 import { FilesService } from './files.service';
 import { CreateFileDto } from './dto/create-file.dto';
 import { Response } from 'express';
@@ -24,5 +32,10 @@ export class FilesController {
         message: error.response.data.message,
       };
     }
+  }
+
+  @Delete(':id')
+  async removeOne(@Param('id') id: string) {
+    return this.filesService.removeOne(id);
   }
 }

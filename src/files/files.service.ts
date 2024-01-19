@@ -23,4 +23,18 @@ export class FilesService {
       }
     }
   }
+
+  async removeOne(id: string) {
+    try {
+      const resp = await axios.delete(`http://segeco-images:3001/images/${id}`);
+      return resp.data;
+    } catch (error) {
+      if (error.response.status === 404) {
+        return {
+          error: true,
+          message: error.response.data.message,
+        };
+      }
+    }
+  }
 }
